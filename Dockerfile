@@ -14,7 +14,7 @@ COPY . /app
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Expose the Render runtime port
-EXPOSE 5000
+EXPOSE 10000
 
 # Run Flask app
 CMD ["python", "app.py"]
