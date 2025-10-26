@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 import pytesseract
 from pdf2image import convert_from_path
 import re, os
+pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"
 
 app = Flask(__name__)
 
