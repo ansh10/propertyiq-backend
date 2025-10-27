@@ -3,6 +3,7 @@ from flask_cors import CORS
 import pytesseract
 from pdf2image import convert_from_path
 import re, os, time
+os.makedirs("uploads", exist_ok=True)
 
 # Explicitly set tesseract path (Render Docker image installs it here)
 pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"
@@ -17,6 +18,7 @@ def extract_text(pdf_path):
     start_time = time.time()
 
     try:
+        print("[DEBUG] before convert_from_path")
         images = convert_from_path(pdf_path)
         print(f"[INFO] Converted PDF to {len(images)} image(s)")
 
@@ -106,5 +108,4 @@ def ping():
 
 # ---------- App Runner ----------
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=True)
+    app.run(host="0.0.0.0", port=10000, debug=True)
