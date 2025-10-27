@@ -1,6 +1,6 @@
 # 🧾 PropertyIQ Backend
 
-**PropertyIQ** is a lightweight Flask-based backend prototype inspired by **Ampliwork’s AI document-processing pipeline**.
+**PropertyIQ** is a lightweight Flask-based backend prototype inspired by **AI document-processing pipelines**.
 It simulates how property tax bills can be parsed and processed automatically using OCR (Optical Character Recognition) while supporting compliance and human-in-the-loop review.
 
 ---
