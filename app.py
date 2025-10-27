@@ -8,11 +8,8 @@ import re, os, time
 pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"
 
 app = Flask(__name__)
-CORS(
-    app,
-    origins=["https://v0-property-iq-dashboard.vercel.app"],
-    methods=["GET", "POST", "OPTIONS"],
-)
+CORS(app, resources={r"/*": {"origins": "*"}}, methods=["GET", "POST", "OPTIONS"])
+
 # ---------- OCR + Parsing Logic ----------
 
 def extract_text(pdf_path):
@@ -52,6 +49,11 @@ def parse_fields(text):
     return data
 
 # ---------- Flask Routes ----------
+
+@app.route("/upload", methods=["OPTIONS"])
+def preflight_check():
+    print("[INFO] Preflight OPTIONS received")
+    return jsonify({"message": "CORS preflight OK"}), 200
 
 @app.route("/upload", methods=["POST"])
 def upload_pdf():
