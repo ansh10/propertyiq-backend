@@ -32,7 +32,7 @@ def extract_text(pdf_path):
         logger.info("Converting PDF to images with low DPI...")
         images = convert_from_path(
             pdf_path, 
-            dpi=72,  # Very low DPI for speed (minimum readable quality)
+            dpi=100,  # Very low DPI for speed (minimum readable quality)
             first_page=1, 
             last_page=1,  # ONLY first page for testing
             thread_count=1,
@@ -63,7 +63,7 @@ def extract_text(pdf_path):
             logger.info(f"Running OCR on page {i + 1}...")
             try:
                 page_text = pytesseract.image_to_string(
-                    img, 
+                    img,
                     config='--psm 6 --oem 1',  # Fast mode
                     timeout=30  # 30 second timeout per page
                 )
