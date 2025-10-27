@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import pytesseract
 from pdf2image import convert_from_path
 import re, os, time
@@ -7,7 +8,11 @@ import re, os, time
 pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"
 
 app = Flask(__name__)
-
+CORS(
+    app,
+    origins=["https://v0-property-iq-dashboard.vercel.app"],
+    methods=["GET", "POST", "OPTIONS"],
+)
 # ---------- OCR + Parsing Logic ----------
 
 def extract_text(pdf_path):
