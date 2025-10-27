@@ -27,20 +27,50 @@ def extract_text(pdf_path):
     start_time = time.time()
 
     try:
-        # Optimize: Use lower DPI for faster processing
-        images = convert_from_path(pdf_path, dpi=150, first_page=1, last_page=3)
+        # Optimize: Lower DPI and limit pages
+        logger.info("Converting PDF to images...")
+        images = convert_from_path(
+            pdf_path, 
+            dpi=100,  # Lower DPI = faster (was 150-200 by default)
+            first_page=1, 
+            last_page=2,  # Only process first 2 pages
+            thread_count=1  # Single thread to avoid memory issues
+        )
         logger.info(f"Converted PDF to {len(images)} image(s)")
 
         text = ""
         for i, img in enumerate(images):
+            page_start = time.time()
             logger.info(f"Running pytesseract on page {i + 1}")
-            # Optimize: Use faster config
-            text += pytesseract.image_to_string(img, config='--psm 6')
+            
+            # Resize image to speed up OCR
+            width, height = img.size
+            if width > 2000:  # If image is too large
+                ratio = 2000 / width
+                new_size = (2000, int(height * ratio))
+                img = img.resize(new_size)
+                logger.info(f"Resized image to {new_size}")
+            
+            # Use faster Tesseract config with timeout
+            page_text = pytesseract.image_to_string(
+                img, 
+                config='--psm 6 --oem 1',  # Faster engine mode
+                timeout=20  # 20 second timeout per page
+            )
+            text += page_text
+            
+            page_duration = time.time() - page_start
+            logger.info(f"Page {i + 1} completed in {page_duration:.2f}s")
             
         duration = time.time() - start_time
         logger.info(f"OCR completed in {duration:.2f} seconds")
+        logger.info(f"Extracted text length: {len(text)} characters")
 
         return text
+        
+    except pytesseract.TesseractError as e:
+        logger.error(f"Tesseract OCR failed: {e}", exc_info=True)
+        raise Exception("OCR processing failed. The PDF may be corrupted or too complex.")
     except Exception as e:
         logger.error(f"OCR failed: {e}", exc_info=True)
         raise
@@ -62,6 +92,28 @@ def parse_fields(text):
     return data
 
 # ---------- Flask Routes ----------
+
+@app.route("/test-ocr", methods=["POST"])
+def test_ocr():
+    """Quick test without actual OCR"""
+    logger.info("Received /test-ocr request")
+    
+    if "file" not in request.files:
+        return jsonify({"error": "No file uploaded"}), 400
+    
+    file = request.files["file"]
+    logger.info(f"File received: {file.filename}")
+    
+    # Return mock data immediately to test if the issue is OCR
+    mock_data = {
+        "owner": "John Doe",
+        "address": "123 Main St",
+        "tax_year": "2024",
+        "amount_due": "1234.56",
+        "due_date": "2024-12-31"
+    }
+    
+    return jsonify(mock_data), 200
 
 @app.route("/upload", methods=["OPTIONS"])
 def preflight_check():

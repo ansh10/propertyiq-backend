@@ -1,6 +1,6 @@
-flask
-flask-cors
-pytesseract
-pdf2image
-pillow
-flask-cors
+Flask==3.0.0
+flask-cors==4.0.0
+pytesseract==0.3.10
+pdf2image==1.16.3
+Pillow==10.1.0
+gunicorn==21.2.0
