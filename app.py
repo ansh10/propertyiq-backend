@@ -33,8 +33,8 @@ def extract_text(pdf_path):
         images = convert_from_path(
             pdf_path, 
             dpi=100,  # Very low DPI for speed (minimum readable quality)
-            first_page=1, 
-            last_page=1,  # ONLY first page for testing
+            # first_page=1, 
+            # last_page=1,  # ONLY first page for testing
             thread_count=1,
             grayscale=True  # Grayscale is faster
         )
